@@ -1,0 +1,94 @@
+No vs pod
+
+no= normalmente temos varios pods dentro de um nó
+pod=
+
+root@controlplane:~$ kubectl get pods
+No resources found in default namespace.
+root@controlplane:~$ kubectl get nodes
+NAME           STATUS   ROLES           AGE   VERSION
+controlplane   Ready    control-plane   22d   v1.37.1
+node01         Ready    <none>          22d   v1.37.1
+root@controlplane:~$ 
+
+
+=======Criar 5 pods dentro do cluster============
+
+-Preciso subir algum recurso
+-ku
+bectl
+
+guarda o estado daquele container- guarda a quantidade de replicas
+
+limite = tamanho da minha maquina (se roda 1000 pods, podemos rodar 1000 pods)
+
+kubectl create deployment + o que criar
+
+COMANDOS
+
+root@controlplane:~$ kubectl create deployment web --image=http --replicas=5 --port=80
+deployment.apps/web created
+root@controlplane:~$ kubectl get pods
+NAME                   READY   STATUS             RESTARTS   AGE
+web-6d8db5b585-4f7wg   0/1     ImagePullBackOff   0          28s
+web-6d8db5b585-pv4vr   0/1     ImagePullBackOff   0          28s
+web-6d8db5b585-qmv62   0/1     ImagePullBackOff   0          28s
+web-6d8db5b585-s2lhm   0/1     ImagePullBackOff   0          28s
+web-6d8db5b585-zvqkb   0/1     ImagePullBackOff   0          28s
+root@controlplane:~$ 
+
+
+criamos 5 pods e servidores web , atender na porta 80
+
+mas não conseguimos acessar, pois não está na internet
+
+- para acessar de qualquer lugar:root@controlplane:~$ kubectl expose deployment web --type=NodePort --port=80 --target-port=80 (expor uma porta na web)
+=====================================================
+
+kubectl get pods -o wide
+
+=================================================
+		IMPORTANT
+kubctl get svc web (mostrar servece web)
+
+root@controlplane:~$ kubectl get svc web
+NAME   TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+web    NodePort   10.106.123.239   <none>        80:31461/TCP   2m35s
+root@controlplane:~$ 
+
+
+Para ter certeza que esta funcionando : curl -s (-s é para não mostrar barra de progresso)
+
+
+
+root@controlplane:~$ kubectl get svc web
+NAME   TYPE       CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE
+web    NodePort   10.106.123.239   <none>        80:31461/TCP   2m35s
+root@controlplane:~$ curl -s http://localhost:31461 | head
+
+
+=========================================
+
+aumentar escala no kubernetes
+
+
+comando : kubectl scale deployment web --replicas=10
+
+
+===========================
+depois para diminuir
+comando: kubectl scale deployment web --replicas=5
+
+
+============================
+Entrar dentro do pod para validar o que aconteceu lá
+-validação de log
+
+comando:kubectl logs deploy/web
+
+====================================
+
+executar comando dentro do container
+comando: kubectl exec -it nome do container --hostname
+
+
