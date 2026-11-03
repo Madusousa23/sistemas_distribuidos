@@ -1,0 +1,15 @@
+# aplicar com: kubectl apply -f site.yaml
+
+apiVersion: apps/v1 #grupo do meu deployment
+kind: Deployment #tipo de objetos
+metadata: #podemos ter vários
+  name: site-yaml
+spec: #especificação
+  replicas: 5
+  selector:
+    matchLabels:
+      app: site-yaml
+  template: #qual é o mode do meu pod
+    metadata:
+      labels:
+        app: site-yaml
